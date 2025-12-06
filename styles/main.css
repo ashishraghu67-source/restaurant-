@@ -1031,8 +1031,9 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, opacity 0.3s ease;
   backdrop-filter: blur(8px);
+  opacity: 1;
 }
 
 .carousel-btn:hover {

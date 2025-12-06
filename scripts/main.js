@@ -151,8 +151,8 @@ function initGalleryCarousel() {
   
   const items = carousel.querySelectorAll('.gallery-item');
   let currentIndex = 0;
-  const itemsPerView = window.innerWidth > 980 ? 3 : window.innerWidth > 700 ? 2 : 1;
-  const totalSlides = Math.ceil(items.length / itemsPerView);
+  let itemsPerView = window.innerWidth > 980 ? 3 : window.innerWidth > 700 ? 2 : 1;
+  let totalSlides = Math.ceil(items.length / itemsPerView);
   
   // Create dots
   if (dotsContainer) {
@@ -166,11 +166,36 @@ function initGalleryCarousel() {
     }
   }
   
+  function updateButtons() {
+    // Hide prev button at start
+    if (prevBtn) {
+      if (currentIndex === 0) {
+        prevBtn.style.opacity = '0';
+        prevBtn.style.pointerEvents = 'none';
+      } else {
+        prevBtn.style.opacity = '1';
+        prevBtn.style.pointerEvents = 'auto';
+      }
+    }
+    
+    // Hide next button at end
+    if (nextBtn) {
+      if (currentIndex >= totalSlides - 1) {
+        nextBtn.style.opacity = '0';
+        nextBtn.style.pointerEvents = 'none';
+      } else {
+        nextBtn.style.opacity = '1';
+        nextBtn.style.pointerEvents = 'auto';
+      }
+    }
+  }
+  
   function updateCarousel() {
     const itemWidth = items[0]?.offsetWidth + 18; // width + gap
     const scrollPosition = currentIndex * itemWidth * itemsPerView;
     carousel.scrollTo({ left: scrollPosition, behavior: 'smooth' });
     updateDots();
+    updateButtons();
   }
   
   function updateDots() {
@@ -188,23 +213,38 @@ function initGalleryCarousel() {
   function nextSlide() {
     if (currentIndex < totalSlides - 1) {
       currentIndex++;
-    } else {
-      currentIndex = 0; // Loop back
+      updateCarousel();
     }
-    updateCarousel();
   }
   
   function prevSlide() {
     if (currentIndex > 0) {
       currentIndex--;
-    } else {
-      currentIndex = totalSlides - 1; // Loop to end
+      updateCarousel();
     }
-    updateCarousel();
   }
+  
+  // Initialize button states
+  updateButtons();
   
   prevBtn?.addEventListener('click', prevSlide);
   nextBtn?.addEventListener('click', nextSlide);
+  
+  // Update buttons on scroll (for manual scrolling)
+  carousel.addEventListener('scroll', () => {
+    const scrollLeft = carousel.scrollLeft;
+    const scrollWidth = carousel.scrollWidth;
+    const clientWidth = carousel.clientWidth;
+    const itemWidth = items[0]?.offsetWidth + 18;
+    
+    // Calculate current index based on scroll position
+    const newIndex = Math.round(scrollLeft / (itemWidth * itemsPerView));
+    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
+      currentIndex = newIndex;
+      updateDots();
+      updateButtons();
+    }
+  });
   
   // Touch/swipe support
   let startX = 0;
@@ -238,8 +278,34 @@ function initGalleryCarousel() {
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      currentIndex = 0;
-      initGalleryCarousel();
+      // Recalculate dimensions
+      itemsPerView = window.innerWidth > 980 ? 3 : window.innerWidth > 700 ? 2 : 1;
+      totalSlides = Math.ceil(items.length / itemsPerView);
+      
+      // Adjust currentIndex if needed
+      if (currentIndex >= totalSlides) {
+        currentIndex = Math.max(0, totalSlides - 1);
+      }
+      
+      // Update carousel position
+      const itemWidth = items[0]?.offsetWidth + 18;
+      const scrollPosition = currentIndex * itemWidth * itemsPerView;
+      carousel.scrollTo({ left: scrollPosition, behavior: 'auto' });
+      
+      // Recreate dots
+      if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+          const dot = document.createElement('button');
+          dot.className = 'carousel-dot' + (i === currentIndex ? ' active' : '');
+          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          dot.addEventListener('click', () => goToSlide(i));
+          dotsContainer.appendChild(dot);
+        }
+      }
+      
+      // Update buttons
+      updateButtons();
     }, 250);
   });
 }
@@ -255,8 +321,8 @@ function initTestimonialsCarousel() {
   
   const items = carousel.querySelectorAll('.testimonial-card');
   let currentIndex = 0;
-  const itemsPerView = window.innerWidth > 980 ? 2 : 1;
-  const totalSlides = Math.ceil(items.length / itemsPerView);
+  let itemsPerView = window.innerWidth > 980 ? 2 : 1;
+  let totalSlides = Math.ceil(items.length / itemsPerView);
   let autoPlayInterval;
   
   // Create dots
@@ -271,11 +337,36 @@ function initTestimonialsCarousel() {
     }
   }
   
+  function updateButtons() {
+    // Hide prev button at start
+    if (prevBtn) {
+      if (currentIndex === 0) {
+        prevBtn.style.opacity = '0';
+        prevBtn.style.pointerEvents = 'none';
+      } else {
+        prevBtn.style.opacity = '1';
+        prevBtn.style.pointerEvents = 'auto';
+      }
+    }
+    
+    // Hide next button at end
+    if (nextBtn) {
+      if (currentIndex >= totalSlides - 1) {
+        nextBtn.style.opacity = '0';
+        nextBtn.style.pointerEvents = 'none';
+      } else {
+        nextBtn.style.opacity = '1';
+        nextBtn.style.pointerEvents = 'auto';
+      }
+    }
+  }
+  
   function updateCarousel() {
     const itemWidth = items[0]?.offsetWidth + 24; // width + gap
     const scrollPosition = currentIndex * itemWidth * itemsPerView;
     carousel.scrollTo({ left: scrollPosition, behavior: 'smooth' });
     updateDots();
+    updateButtons();
   }
   
   function updateDots() {
@@ -294,22 +385,21 @@ function initTestimonialsCarousel() {
   function nextSlide() {
     if (currentIndex < totalSlides - 1) {
       currentIndex++;
-    } else {
-      currentIndex = 0; // Loop back
+      updateCarousel();
+      resetAutoPlay();
     }
-    updateCarousel();
-    resetAutoPlay();
   }
   
   function prevSlide() {
     if (currentIndex > 0) {
       currentIndex--;
-    } else {
-      currentIndex = totalSlides - 1; // Loop to end
+      updateCarousel();
+      resetAutoPlay();
     }
-    updateCarousel();
-    resetAutoPlay();
   }
+  
+  // Initialize button states
+  updateButtons();
   
   function startAutoPlay() {
     autoPlayInterval = setInterval(nextSlide, 5000); // Auto-rotate every 5 seconds
@@ -326,6 +416,23 @@ function initTestimonialsCarousel() {
   
   prevBtn?.addEventListener('click', prevSlide);
   nextBtn?.addEventListener('click', nextSlide);
+  
+  // Update buttons on scroll (for manual scrolling)
+  carousel.addEventListener('scroll', () => {
+    const scrollLeft = carousel.scrollLeft;
+    const scrollWidth = carousel.scrollWidth;
+    const clientWidth = carousel.clientWidth;
+    const itemWidth = items[0]?.offsetWidth + 24;
+    
+    // Calculate current index based on scroll position
+    const newIndex = Math.round(scrollLeft / (itemWidth * itemsPerView));
+    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
+      currentIndex = newIndex;
+      updateDots();
+      updateButtons();
+      resetAutoPlay();
+    }
+  });
   
   // Pause on hover
   carousel.addEventListener('mouseenter', stopAutoPlay);
@@ -369,9 +476,36 @@ function initTestimonialsCarousel() {
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      currentIndex = 0;
+      // Recalculate dimensions
+      itemsPerView = window.innerWidth > 980 ? 2 : 1;
+      totalSlides = Math.ceil(items.length / itemsPerView);
+      
+      // Adjust currentIndex if needed
+      if (currentIndex >= totalSlides) {
+        currentIndex = Math.max(0, totalSlides - 1);
+      }
+      
+      // Update carousel position
+      const itemWidth = items[0]?.offsetWidth + 24;
+      const scrollPosition = currentIndex * itemWidth * itemsPerView;
+      carousel.scrollTo({ left: scrollPosition, behavior: 'auto' });
+      
+      // Recreate dots
+      if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+          const dot = document.createElement('button');
+          dot.className = 'carousel-dot' + (i === currentIndex ? ' active' : '');
+          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          dot.addEventListener('click', () => goToSlide(i));
+          dotsContainer.appendChild(dot);
+        }
+      }
+      
+      // Update buttons
+      updateButtons();
       stopAutoPlay();
-      initTestimonialsCarousel();
+      resetAutoPlay();
     }, 250);
   });
 }
