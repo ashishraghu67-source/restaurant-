@@ -1,3 +1,60 @@
+// Site Loader
+function initSiteLoader() {
+  const loader = document.getElementById('siteLoader');
+  const mainContent = document.getElementById('mainContent');
+  
+  if (!loader || !mainContent) return;
+  
+  // Simulate loading progress
+  let progress = 0;
+  const progressBar = loader.querySelector('.loader-progress-bar');
+  
+  const progressInterval = setInterval(() => {
+    progress += Math.random() * 15;
+    if (progress > 100) progress = 100;
+    
+    if (progressBar) {
+      progressBar.style.width = progress + '%';
+    }
+    
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+      
+      // Wait for minimum display time
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        mainContent.classList.add('loaded');
+        document.body.classList.add('loaded');
+        
+        // Remove loader from DOM after animation
+        setTimeout(() => {
+          loader.remove();
+        }, 800);
+      }, 500);
+    }
+  }, 100);
+  
+  // Fallback: Hide loader after max 3 seconds
+  setTimeout(() => {
+    clearInterval(progressInterval);
+    if (!loader.classList.contains('hidden')) {
+      loader.classList.add('hidden');
+      mainContent.classList.add('loaded');
+      document.body.classList.add('loaded');
+      setTimeout(() => {
+        loader.remove();
+      }, 800);
+    }
+  }, 3000);
+}
+
+// Initialize loader when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSiteLoader);
+} else {
+  initSiteLoader();
+}
+
 // Mobile menu toggle
 const menuToggle = document.querySelector('.mobile-menu-toggle');
 const navLinks = document.getElementById('navLinks');

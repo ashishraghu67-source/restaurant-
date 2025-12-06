@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- 
+    NOTE: All images in this site are sample/placeholder content.
+    These are not final images and should be replaced with actual content.
+    Maintain heuristic perception - these are previews for development purposes only.
+  -->
   <meta charset="UTF-8" />
   <title>Bohemian Arts · Alchemical Dining Experience</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +16,32 @@
   <link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
-  <div class="page">
+  <!-- Site Loader -->
+  <div class="site-loader" id="siteLoader">
+    <div class="loader-background"></div>
+    <div class="loader-content">
+      <div class="loader-icon">
+        <div class="loader-orb"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-particles">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="loader-text">
+        <h2 class="loader-title">Bohemian Arts</h2>
+        <p class="loader-subtitle">Alchemical Dining Experience</p>
+        <div class="loader-progress">
+          <div class="loader-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="mainContent">
     <header>
       <div class="nav">
         <div class="brand">
@@ -791,8 +821,8 @@
         </div>
         <div class="footer-bottom">
           <div class="footer-tags">
-            <span>Every dish has a story</span>
-            <span>Designed for live events</span>
+          <span>Every dish has a story</span>
+          <span>Designed for live events</span>
           </div>
           <div class="footer-copyright">
             <p>&copy; <span id="current-year">2024</span> Bohemian Arts. All rights reserved.</p>
